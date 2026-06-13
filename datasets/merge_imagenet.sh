@@ -1,5 +1,6 @@
 #!/usr/bin/env zsh
 # unite the training sets in ONE directory called 'train'
+# instead of train_X{1..4}/data you get train/data 
 
 target=/Users/inuit/.cache/kagglehub/datasets/ambityga/imagenet100/train/
 
