@@ -95,7 +95,7 @@ def make_predictions(model, dataloader, labels_dict, device="mps", max_batches=1
                 break
     return results
 
-def classify_sample(model, img_tensor, labels_dict=None, true_label=None, device="mps", topk=3):
+def classify_sample(model, img_tensor, labels_dict=None, true_label=None, device="mps", topk=1):
     """
     Classify a single image tensor.
 
@@ -105,7 +105,7 @@ def classify_sample(model, img_tensor, labels_dict=None, true_label=None, device
     - device: device string or torch.device
     - topk: how many top predictions to return
 
-    Returns a dict with keys: topk_idxs (list), topk_probs (list), optionally true_idx and true_name.
+    Returns a dict with keys: topk_idxs (list), topk_probs (list), the image to classify: numpy array and the class name: str
     """
     
     # normalize device
@@ -123,10 +123,7 @@ def classify_sample(model, img_tensor, labels_dict=None, true_label=None, device
         top_probs = top_probs[0].cpu().tolist()
         top_idxs = top_idxs[0].cpu().tolist()
 
-    res = {"topk_idxs": top_idxs, "topk_probs": top_probs}
-
-    if labels_dict is not None:
-        res["true_name"] = labels_dict.get(int(true_label))
+    res = zip(top_idxs, top_probs)
 
     # Convert tensor (C, H, W) -> (H, W, C) and unnormalize to [0,1]
     img_tensor = img_tensor.cpu().detach()
@@ -136,14 +133,15 @@ def classify_sample(model, img_tensor, labels_dict=None, true_label=None, device
     img_np = (img_np * std) + mean
     img_np = np.clip(img_np, 0.0, 1.0)
 
-    class_name = labels_dict[int(true_label)]
+    if labels_dict and true_label:
+        class_name = labels_dict[int(true_label)]
 
-    plt.figure(figsize=(4, 4))
-    plt.imshow(img_np)
-    title = f"Label: {class_name}"
-    plt.title(class_name)
-    plt.axis('off')
-    plt.show()
+    # plt.figure(figsize=(4, 4))
+    # plt.imshow(img_np)
+    # title = f"Label: {class_name}"
+    # plt.title(title)
+    # plt.axis('off')
+    # plt.show()
     
-    return res
+    return res, img_np, class_name
 

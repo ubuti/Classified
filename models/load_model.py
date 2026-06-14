@@ -7,8 +7,6 @@ def load_model(model_name="resnet50", weights="IMAGENET1K_V1"):
     print("Evaluating model config...")
     try:
         model = torch.hub.load("pytorch/vision", model_name, weights)
-        print(f"Loading {model_name} from hub...")
-        print("Done")
     except:
         print(f"Could not load given model {model_name}")
         raise Exception

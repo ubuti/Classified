@@ -1,0 +1,5 @@
+.vscode/settings.json
+exploration/explo1.ipynb
+datasets/__pycache__/
+models/__pycache__/load_model.cpython-311.pyc
+models/__pycache__/use_model.cpython-311.pyc

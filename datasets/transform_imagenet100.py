@@ -66,8 +66,8 @@ def load_image100_data(training_data_path="/Users/inuit/.cache/kagglehub/dataset
         f.close()
         
     # rearrange order
+    names_to_idx = {int(k): v[1] for k, v in imagenet_idx.items()}
     imagenet_idx = {v[0] : (v[1], k) for k, v in imagenet_idx.items() if v[0] in labels_dir.keys()}
-    names_to_idx = {int(v[1]): v[0] for k, v in imagenet_idx.items()}
 
     images = []
     labels = []
