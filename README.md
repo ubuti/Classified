@@ -1,8 +1,10 @@
 # Classified
 
-A classification process is appllied on a) a subset of the imagenet dataset (ImageNet100
-) provided on *kaggle*, and b) the Caltech101 dataset. 
- Different models are used in both cases, either as novel models that are build from scratch and deployed or pre-existing ones that are fine-tuned prior to testing.
+In this project an interface is implemented to demonstrate the classification of images based on models availabel via the pytorch hub. 
+
+The images provided come from *ImageNet100* and are a subset of *Imagenet1k* (available via [Kaggle](https://www.kaggle.com/datasets/ambityga/imagenet100)).
+
+
 
 
 
