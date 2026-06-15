@@ -43,7 +43,6 @@ def train_model(model, dataloader, optimizer=None, criterion=None, device="mps",
 
             running_loss += loss.item()
             
-    
         try:
             torch.mps.empty_cache()
         except Exception:
@@ -56,7 +55,7 @@ def train_model(model, dataloader, optimizer=None, criterion=None, device="mps",
     return train_losses
 
 
-def make_predictions(model, dataloader, labels_dict, device="mps", max_batches=1, topk=5):
+def make_predictions(model, dataloader, labels_dict, device="cpu", max_batches=1, topk=5):
     """
     Run a trained model over batches from a dataloader and collect top-k predictions.
 
@@ -75,10 +74,11 @@ def make_predictions(model, dataloader, labels_dict, device="mps", max_batches=1
         - "topk_idxs" (list[int]): predicted ImageNet indices (top-k)
         - "topk_probs" (list[float]): corresponding probabilities
     """
+    model = model.to("cpu")
     results = []
     with torch.no_grad():
         for batch_i, (imgs, labels) in enumerate(dataloader):
-            imgs = imgs.to(device)
+            #imgs = imgs.to(device)
             outputs = model(imgs)                      # (B, 1000)
             probs = torch.softmax(outputs, dim=1)      # convert to probabilities
             top_probs, top_idxs = probs.topk(topk, dim=1)
@@ -95,7 +95,7 @@ def make_predictions(model, dataloader, labels_dict, device="mps", max_batches=1
                 break
     return results
 
-def classify_sample(model, img_tensor, labels_dict=None, true_label=None, device="mps", topk=1):
+def classify_sample(model, img_tensor, labels_dict=None, true_label=None, topk=1):
     """
     Classify a single image tensor.
 
@@ -109,14 +109,12 @@ def classify_sample(model, img_tensor, labels_dict=None, true_label=None, device
     """
     
     # normalize device
-    device = torch.device(device) if isinstance(device, str) else device
-    model = model.to(device)
+    model = model.to("cpu")
     model.eval()
     with torch.no_grad():
         t = img_tensor
         if t.dim() == 3:
             t = t.unsqueeze(0)  # (1,C,H,W)
-        t = t.to(device, non_blocking=True)
         out = model(t)                         # (1, num_classes)
         probs = torch.softmax(out, dim=1)
         top_probs, top_idxs = probs.topk(topk, dim=1)
@@ -134,14 +132,7 @@ def classify_sample(model, img_tensor, labels_dict=None, true_label=None, device
     img_np = np.clip(img_np, 0.0, 1.0)
 
     if labels_dict and true_label:
-        class_name = labels_dict[int(true_label)]
-
-    # plt.figure(figsize=(4, 4))
-    # plt.imshow(img_np)
-    # title = f"Label: {class_name}"
-    # plt.title(title)
-    # plt.axis('off')
-    # plt.show()
+        class_name = labels_dict[int(true_label)]    
     
     return res, img_np, class_name
 

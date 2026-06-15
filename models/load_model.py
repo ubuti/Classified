@@ -18,6 +18,7 @@ def load_model(model_name="resnet50", weights="IMAGENET1K_V1"):
     except:
         pass
         raise Exception
+    
     print(f"Model has {model.fc.out_features} output labels")
     if torch.backends.mps.is_available():
         device = torch.device("mps")
