@@ -6,17 +6,17 @@ def load_model(model_name="resnet50", weights="IMAGENET1K_V1"):
     
     print("Evaluating model config...")
     try:
-        model = torch.hub.load("pytorch/vision", model_name, weights)
-    except:
-        print(f"Could not load given model {model_name}")
-        raise Exception
-    try:
         weight_enum = [w for w  in torch.hub.load("pytorch/vision", "get_model_weights", model_name)]
         if not weights in [str(f).split('.')[1] for f in weight_enum]:
             weights = weight_enum[len(weight_enum)-1]
-            print(f"Using alternative weights: {weights}")
+            print(f"Using weights: {weights}")
     except:
-        pass
+        print(f"Error. Check name: {model_name} - {weights}")
+        raise Exception
+    try:
+        model = torch.hub.load("pytorch/vision", model_name, weights)
+    except:
+        print(f"Could not load given model {model_name}")
         raise Exception
     
     print(f"Model has {model.fc.out_features} output labels")
